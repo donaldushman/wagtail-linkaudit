@@ -2,6 +2,36 @@ from django.db import models
 from django.conf import settings
 
 
+class EmailRecipient(models.Model):
+    """Email addresses that should receive scan completion notifications
+    
+    Manage notification recipients via Wagtail admin. Emails from 
+    LINKAUDIT_EMAIL_RECIPIENTS setting are always included.
+    """
+    email = models.EmailField(unique=True, help_text="Email address to receive scan notifications")
+    name = models.CharField(max_length=255, blank=True, help_text="Name or description (optional)")
+    is_active = models.BooleanField(default=True, help_text="Uncheck to temporarily disable notifications")
+    added_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='email_recipients'
+    )
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['email']
+        verbose_name = "Email Recipient"
+        verbose_name_plural = "Email Recipients"
+
+    def __str__(self):
+        if self.name:
+            status = " (inactive)" if not self.is_active else ""
+            return f"{self.name} <{self.email}>{status}"
+        return self.email
+
+
 class WhitelistedDomain(models.Model):
     """Domains that should be excluded from broken link reporting (e.g., known bot blockers)
     

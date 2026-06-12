@@ -222,6 +222,7 @@ def check_external_link(scan, source_url, target_url):
 def send_scan_results_email(scan):
     """Send email notification with scan results"""
     from wagtail.models import Site as WagtailSite
+    from .models import EmailRecipient
     
     # Get site information
     try:
@@ -232,8 +233,17 @@ def send_scan_results_email(scan):
         site_name = getattr(settings, 'WAGTAIL_SITE_NAME', 'Unknown Site')
         site_url = getattr(settings, 'BASE_URL', 'Unknown')
     
-    # Get email recipients
-    recipients = getattr(settings, 'LINKAUDIT_EMAIL_RECIPIENTS', [])
+    # Get email recipients from both settings and database
+    recipients = list(getattr(settings, 'LINKAUDIT_EMAIL_RECIPIENTS', []))
+    
+    # Add active recipients from database
+    db_recipients = EmailRecipient.objects.filter(is_active=True).values_list('email', flat=True)
+    recipients.extend(db_recipients)
+    
+    # Remove duplicates while preserving order
+    recipients = list(dict.fromkeys(recipients))
+    
+    # Fallback if no recipients configured
     if not recipients:
         recipients = [getattr(settings, "WAGTAILADMIN_NOTIFICATION_FROM_EMAIL", "webmaster@localhost")]
     

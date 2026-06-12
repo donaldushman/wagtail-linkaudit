@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.db.models import Count, Q
 from datetime import timedelta
 
-from .models import Scan, URL, BrokenLink, WhitelistedDomain, WhitelistedURL
+from .models import Scan, URL, BrokenLink, WhitelistedDomain, WhitelistedURL, EmailRecipient
 
 
 class ScanButtonHelper(ButtonHelper):
@@ -185,6 +185,17 @@ class WhitelistedURLAdmin(ModelAdmin):
     list_filter = ('match_type', 'added_at')
 
 
+class EmailRecipientAdmin(ModelAdmin):
+    """Admin for email notification recipients"""
+    model = EmailRecipient
+    menu_label = 'Email Recipients'
+    menu_icon = 'mail'
+    list_display = ('email', 'name', 'is_active', 'added_by', 'added_at')
+    list_filter = ('is_active', 'added_at')
+    search_fields = ('email', 'name')
+    ordering = ('email',)
+
+
 class URLAdmin(ModelAdmin):
     model = URL
     menu_label = 'All URLs'
@@ -200,7 +211,7 @@ class LinkAuditGroup(ModelAdminGroup):
     menu_icon = 'link'
     menu_order = 300
     add_to_settings_menu = True
-    items = (BrokenLinkAdmin, ScanAdmin, WhitelistedURLAdmin, URLAdmin)
+    items = (BrokenLinkAdmin, ScanAdmin, WhitelistedURLAdmin, EmailRecipientAdmin, URLAdmin)
 
 
 modeladmin_register(LinkAuditGroup)

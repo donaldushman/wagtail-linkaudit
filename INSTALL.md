@@ -5,7 +5,7 @@
 ### Add to requirements.txt (Recommended)
 
 ```
-wagtail-linkaudit @ git+https://github.com/donaldushman/wagtail-linkaudit.git@v1.0.0
+wagtail-linkaudit @ git+https://github.com/donaldushman/wagtail-linkaudit.git@v1.0.1
 ```
 
 Then:
@@ -16,7 +16,7 @@ pip install -r requirements.txt
 ### Direct pip install
 
 ```bash
-pip install git+https://github.com/donaldushman/wagtail-linkaudit.git@v1.0.0
+pip install git+https://github.com/donaldushman/wagtail-linkaudit.git@v1.0.1
 ```
 
 ### For private repositories

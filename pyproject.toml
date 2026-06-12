@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wagtail-linkaudit"
-version = "1.0.0"
+version = "1.0.1"
 description = "A Django/Wagtail app for scanning websites for broken links with an integrated admin workflow"
 readme = "README.md"
 requires-python = ">=3.8"

@@ -40,15 +40,15 @@ A Django/Wagtail app for scanning websites for broken links with an integrated a
 
 Add to your `requirements.txt`:
 ```
-wagtail-linkaudit @ git+https://github.com/donaldushman/wagtail-linkaudit.git@v3.0.2
+wagtail-linkaudit @ git+https://github.com/donaldushman/wagtail-linkaudit.git@v1.0.0
 ```
 
 Or install directly:
 ```bash
-pip install git+https://github.com/donaldushman/wagtail-linkaudit.git@v3.0.2
+pip install git+https://github.com/donaldushman/wagtail-linkaudit.git@v1.0.0
 ```
 
-**Recommended:** Pin to a specific version tag (like `@v3.0.2`) for reproducible deployments.
+**Recommended:** Pin to a specific version tag (like `@v1.0.0`) for reproducible deployments.
 
 ### Setup
 
@@ -63,8 +63,9 @@ INSTALLED_APPS = [
 
 2. Configure settings:
 ```python
-# Email recipients for scan notifications
-LINKAUDIT_EMAIL_RECIPIENTS = ['admin@example.com', 'content@example.com']
+# Optional: Email recipients always included in notifications (e.g., developers/admins)
+# Additional recipients can be managed via Wagtail admin (Settings → Link Audit → Email Recipients)
+LINKAUDIT_EMAIL_RECIPIENTS = ['admin@example.com']
 
 # Site information (or use Wagtail's Site model)
 WAGTAIL_SITE_NAME = 'My Website'
@@ -107,6 +108,28 @@ python manage.py run_link_scan --url https://example.com
 - `--max-depth`: Maximum crawl depth (default: 3)
 
 The scan runs synchronously and will print progress as it goes. When complete, an email notification is sent to the configured recipients.
+
+### Managing Email Recipients
+
+Control who receives scan completion notifications:
+
+**Via Wagtail Admin** (Settings → Link Audit → Email Recipients):
+- Add/remove email addresses
+- Add optional name/description for each recipient
+- Toggle active/inactive status to temporarily disable notifications
+- Visible to all Wagtail admin users
+
+**Via Settings** (`LINKAUDIT_EMAIL_RECIPIENTS`):
+- Hardcoded emails always included (e.g., dev team, site admins)
+- Useful for ensuring critical people always receive notifications
+- Combined with database recipients automatically
+- Duplicates are removed
+
+**Example workflow:**
+- Set `LINKAUDIT_EMAIL_RECIPIENTS = ['devteam@company.com']` in settings
+- Content managers add `content@company.com` via Wagtail admin
+- Both receive notifications
+- Content manager can be deactivated without code changes
 
 ### Scheduling Recurring Scans
 
@@ -200,9 +223,21 @@ Schedule this monthly to keep your database clean.
 
 ### Whitelist Management
 
-Go to Wagtail Admin → Settings → Link Audit → Whitelisted Domains
+**Wagtail Admin → Settings → Link Audit:**
 
-Pre-populate common bot-blocking domains:
+**Whitelisted URLs:**
+- Whitelist specific URLs to exclude from reporting
+- Two match types: exact URL or prefix (URL and all paths under it)
+- Managed by content managers
+
+**Email Recipients:**
+- Add/remove notification recipients
+- Toggle active/inactive status
+- See who added each recipient and when
+
+**Django Admin (Superusers Only):**
+
+**Whitelisted Domains:**
 - linkedin.com
 - facebook.com
 - twitter.com / x.com
@@ -222,6 +257,12 @@ Individual broken link with:
 - Review status (new, reviewing, whitelisted, fixed)
 - Notes field for team communication
 - Reviewed by/at tracking
+
+### EmailRecipient
+Email addresses that receive scan completion notifications.
+- Managed via Wagtail admin (Settings → Link Audit)
+- Can be toggled active/inactive
+- Combined with `LINKAUDIT_EMAIL_RECIPIENTS` setting
 
 ### WhitelistedURL
 Specific URLs excluded from broken link reporting. Available in Wagtail admin for content managers.
@@ -248,6 +289,11 @@ Internal tracking of all URLs checked during scan.
 - Whitelist specific URLs (content managers via Wagtail admin)
 - Export to CSV
 
+**Email Recipient Management:**
+- Add/remove notification recipients (Wagtail admin)
+- Toggle active/inactive status
+- Combine with LINKAUDIT_EMAIL_RECIPIENTS setting
+
 **Whitelist Management:**
 - WhitelistedURL - Wagtail admin (Settings → Link Audit)
 - WhitelistedDomain - Django admin only (superusers)
@@ -272,7 +318,7 @@ python manage.py stop_running_scans --mark-as=failed
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `LINKAUDIT_EMAIL_RECIPIENTS` | `[]` | List of email addresses for notifications |
+| `LINKAUDIT_EMAIL_RECIPIENTS` | `[]` | List of email addresses always included in notifications (e.g., dev team). Additional recipients can be managed via Wagtail admin. |
 | `WAGTAIL_SITE_NAME` | Required | Site name for email subject |
 | `BASE_URL` | Required | Base URL for scanning |
 | `WAGTAIL_ADMIN_URL` | `/admin/` | Custom admin URL path |
@@ -281,21 +327,10 @@ python manage.py stop_running_scans --mark-as=failed
 ## Why No Task Queue?
 
 This app uses a simple synchronous approach instead of Celery or django-q2:
-- ✅ **Zero infrastructure** - no Redis, RabbitMQ, or worker processes
-- ✅ **Simple deployment** - works on any hosting (Heroku, PythonAnywhere, shared hosting)
-- ✅ **Easy scheduling** - use cron, systemd timers, or Heroku Scheduler
-- ✅ **No extra costs** - no worker dynos or additional services
-- ✅ **Easier debugging** - straightforward synchronous execution
+- **Zero infrastructure** - no Redis, RabbitMQ, or worker processes
+- **Simple deployment** - works on any hosting (Heroku, PythonAnywhere, shared hosting)
+- **Easy scheduling** - use cron, systemd timers, or Heroku Scheduler
+- **No extra costs** - no worker dynos or additional services
+- **Easier debugging** - straightforward synchronous execution
 
 Perfect for small-to-medium sites. For very large sites (1000+ pages), consider running scans less frequently or increasing the timeout.
-
-## Differences from Multi-Site Version
-
-This standalone version is designed for deployment to individual sites:
-- ✅ No Site model - uses current Wagtail site
-- ✅ Simplified configuration via Django settings
-- ✅ Single-site focus with better admin UX
-- ✅ Integrated review workflow for content managers
-- ✅ Whitelist management in admin
-- ✅ Simplified email notifications
-- ✅ No task queue required (v3.0+)

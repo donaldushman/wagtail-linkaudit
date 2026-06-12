@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models import Count, Q
 from datetime import timedelta
 from urllib.parse import urlparse
-from .models import Scan, URL, BrokenLink, WhitelistedDomain, WhitelistedURL
+from .models import Scan, URL, BrokenLink, WhitelistedDomain, WhitelistedURL, EmailRecipient
 
 
 @admin.register(WhitelistedDomain)
@@ -33,6 +33,21 @@ class WhitelistedURLAdmin(admin.ModelAdmin):
     search_fields = ('url', 'reason')
     readonly_fields = ('added_by', 'added_at')
     ordering = ('url',)
+
+    def save_model(self, request, obj, form, change):
+        if not change:  # Only set added_by on creation
+            obj.added_by = request.user
+        super().save_model(request, obj, form, change)
+
+
+@admin.register(EmailRecipient)
+class EmailRecipientAdmin(admin.ModelAdmin):
+    """Django admin for EmailRecipient - also available in Wagtail admin"""
+    list_display = ('email', 'name', 'is_active', 'added_by', 'added_at')
+    list_filter = ('is_active', 'added_at')
+    search_fields = ('email', 'name')
+    readonly_fields = ('added_by', 'added_at')
+    ordering = ('email',)
 
     def save_model(self, request, obj, form, change):
         if not change:  # Only set added_by on creation

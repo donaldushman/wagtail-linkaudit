@@ -1,10 +1,37 @@
 # Changelog
 
+## Version 1.0.1 - Email Recipient Management (June 2026)
+
+### ✨ New Feature: Manage Email Recipients via Admin
+
+Added ability to manage scan notification recipients through the Wagtail admin interface.
+
+**What's New:**
+- **EmailRecipient Model**: Add/remove notification recipients via Wagtail admin
+- **Active/Inactive Toggle**: Temporarily disable notifications without removing recipients
+- **Combined Recipients**: Database recipients are combined with `LINKAUDIT_EMAIL_RECIPIENTS` setting
+- **Admin Interface**: Located in Settings → Link Audit → Email Recipients
+
+**Why This Change?**
+- Content managers can add/remove team members without code changes
+- Developers can still ensure critical emails (e.g., dev team) are always included via settings
+- No duplicate emails sent - system automatically deduplicates
+- Easier to manage growing teams or changing personnel
+
+**Migration:**
+```bash
+python manage.py migrate wagtail_linkaudit
+```
+
+Existing `LINKAUDIT_EMAIL_RECIPIENTS` setting continues to work and is combined with database recipients.
+
+---
+
 ## Version 1.0.0 - Initial Release (June 2026)
 
-First public release of Wagtail Link Audit - a Django/Wagtail app for scanning websites for broken links with an integrated admin workflow.
+First public release of Wagtail Link Audit - a Django/Wagtail app for scanning websites for broken links with an integrated admin workflow. This is a single-site version of an existing application intended for consultants managing multiple client websites.
 
-### ✨ Features
+### Features
 
 **Link Scanning:**
 - Crawls website pages following internal links up to configurable depth
@@ -34,14 +61,14 @@ First public release of Wagtail Link Audit - a Django/Wagtail app for scanning w
 - Direct link to admin for detailed review
 - Highlights critical issues requiring immediate attention
 
-### 📦 Installation
+### Installation
 
 Compatible with:
 - Django 4.0+
 - Wagtail 5.0+ and 6.0+
 - Python 3.8+
 
-### 🚀 Deployment
+### Deployment
 
 No infrastructure dependencies required:
 - No Redis or RabbitMQ needed
@@ -50,7 +77,7 @@ No infrastructure dependencies required:
 - Works on any hosting platform
 - Schedule scans via cron or your preferred scheduler
 
-### 📝 Usage
+### Usage
 
 Run scans via management command:
 ```bash
@@ -69,16 +96,13 @@ python manage.py cleanup_old_scans --days 90
 - **WhitelistedURL**: URL-specific whitelist entries
 - **WhitelistedDomain**: Domain-wide whitelist entries
 - **URL**: Internal tracking of all checked URLs
-- ❌ Async task spawning
-- ❌ Worker process requirement
-- ❌ Complex task queue setup
 
 **Added:**
-- ✅ New `scanner.py` module with synchronous scanning
-- ✅ Management command: `python manage.py run_link_scan`
-- ✅ Management command: `python manage.py cleanup_old_scans`
-- ✅ Real-time progress output during scans
-- ✅ Documentation for cron/systemd/Heroku Scheduler
+- New `scanner.py` module with synchronous scanning
+- Management command: `python manage.py run_link_scan`
+- Management command: `python manage.py cleanup_old_scans`
+- Real-time progress output during scans
+- Documentation for cron/systemd/Heroku Scheduler
 
 #### Migration from v2.x
 
@@ -145,7 +169,7 @@ No worker dyno needed!
 
 ### New Features
 
-#### 🎨 Wagtail Admin Integration
+#### Wagtail Admin Integration
 - **Integrated with Wagtail Admin**: App now appears in Wagtail's sidebar under "Link Audit" (not Django admin)
 - **ModelAdmin Group**: All models organized under a single "Link Audit" menu item
 - **Custom Action Buttons**: Quick actions on individual broken links:
@@ -157,11 +181,11 @@ No worker dyno needed!
 - **Better Icons**: Custom Wagtail icons for each section (warning, tasks, tick-inverse, link)
 - **Consistent UX**: Follows Wagtail's design patterns and styling
 
-#### 📁 New Files
+#### New Files
 - `wagtail_hooks.py` - Registers ModelAdmin classes with Wagtail
 - `views.py` - Custom action views for status updates and whitelisting
 
-#### 🔧 Technical Improvements
+#### Technical Improvements
 - Uses `wagtail.contrib.modeladmin` for admin interface
 - Custom ButtonHelper classes for action buttons
 - Maintains all existing functionality (color coding, severity badges, filters)
@@ -178,12 +202,12 @@ No worker dyno needed!
 
 ### Major Changes from Multi-Site Version
 
-#### 🏗️ Architecture
+#### Architecture
 - **Removed Site Model**: No more multi-site management - app now works with the single site it's installed on
 - **Simplified Configuration**: Uses Django settings instead of database-stored site information
 - **Renamed App**: Changed from `linkchecker` to `wagtail_linkaudit` for clarity
 
-#### 🎨 Admin Enhancements
+#### Admin Enhancements
 
 **New Models:**
 - `WhitelistedDomain` - Manage domains that should be excluded from broken link reporting
