@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wagtail-linkaudit"
+version = "1.0.0"
+description = "A Django/Wagtail app for scanning websites for broken links with an integrated admin workflow"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Donald Ushman", email = "donald@ushman.dev"}
+]
+keywords = ["wagtail", "django", "link checker", "broken links", "audit"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 4.0",
+    "Framework :: Django :: 4.1",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+    "Framework :: Wagtail",
+    "Framework :: Wagtail :: 5",
+    "Framework :: Wagtail :: 6",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Internet :: WWW/HTTP :: Site Management",
+]
+
+dependencies = [
+    "Django>=4.0",
+    "wagtail>=5.0",
+    "wagtail-modeladmin>=2.0.0",
+    "requests>=2.25.0",
+    "beautifulsoup4>=4.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-django",
+    "black",
+    "flake8",
+    "mypy",
+]
+
+[project.urls]
+Homepage = "https://github.com/donaldushman/wagtail-linkaudit"
+Documentation = "https://github.com/donaldushman/wagtail-linkaudit/blob/main/README.md"
+Repository = "https://github.com/donaldushman/wagtail-linkaudit"
+Issues = "https://github.com/donaldushman/wagtail-linkaudit/issues"
+Changelog = "https://github.com/donaldushman/wagtail-linkaudit/blob/main/CHANGELOG.md"
+
+[tool.setuptools]
+packages = ["wagtail_linkaudit", "wagtail_linkaudit.management", "wagtail_linkaudit.management.commands", "wagtail_linkaudit.migrations"]
+
+[tool.setuptools.package-data]
+wagtail_linkaudit = ["py.typed"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
