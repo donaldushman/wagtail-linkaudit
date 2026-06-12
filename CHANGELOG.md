@@ -1,5 +1,19 @@
 # Changelog
 
+## Version 1.0.2 - Migration Fix (June 2026)
+
+### Fixed
+- **Critical**: Added missing `0001_initial.py` migration that was causing deployment failures
+- The migration chain now properly starts with `0001_initial` instead of `0002`
+- This fixes `NodeNotFoundError` when deploying to fresh databases
+
+**Migration:**
+```bash
+python manage.py migrate wagtail_linkaudit
+```
+
+---
+
 ## Version 1.0.1 - Email Recipient Management (June 2026)
 
 ### New Feature: Manage Email Recipients via Admin
