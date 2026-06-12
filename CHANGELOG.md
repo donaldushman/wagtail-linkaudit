@@ -2,7 +2,7 @@
 
 ## Version 1.0.1 - Email Recipient Management (June 2026)
 
-### ✨ New Feature: Manage Email Recipients via Admin
+### New Feature: Manage Email Recipients via Admin
 
 Added ability to manage scan notification recipients through the Wagtail admin interface.
 
@@ -245,42 +245,29 @@ No worker dyno needed!
 - Simple CRUD for managing whitelisted domains
 - Auto-tracks who added domain and when
 
-#### 📧 Email Notifications
+#### Email Notifications
 - **Simplified**: No more large text attachments
 - **Summary Only**: Shows critical count, investigate count, and basic stats
 - **Direct Admin Link**: Click to view full details in admin
 - **Smart Subject**: Indicates severity (Critical Issues vs. Needs Review vs. No Issues)
 
-#### 🔒 Whitelist System
-- Database-driven whitelist (previously hardcoded)
+#### Whitelist System
+- Database-driven whitelist
 - Admin interface for managing whitelist
 - One-click whitelist from broken links
-- Whitelist checked before creating BrokenLink records (reduces noise)
+- Whitelist checked before creating BrokenLink records
 - Preserves hardcoded whitelist for common bot blockers
 
-#### 🔄 Workflow Improvements
+#### Workflow Improvements
 1. Content manager receives email notification
 2. Clicks link to admin
 3. Sees broken links categorized by severity
 4. Can filter, search, and bulk-update status
-5. Can whitelist domains directly
+5. Can whitelist URLs directly
 6. Can add notes for team communication
 7. System tracks who reviewed what and when
 
 ### Technical Details
-
-**Database Changes:**
-- Removed `Site` model
-- Removed `site` foreign key from `Scan`
-- Added fields to `BrokenLink`: review_status, notes, reviewed_by, reviewed_at
-- Added `WhitelistedDomain` model
-- Added properties to `Scan`: critical_broken_links_count, needs_review_count
-- Added Meta classes with proper ordering and verbose names
-
-**Task Changes:**
-- Updated `check_link` to check database whitelist before creating BrokenLink
-- Simplified `send_scan_results_email` to send summary with admin link
-- Updated all references from `scan.site` to use settings/Wagtail site
 
 **Settings Required:**
 - `LINKAUDIT_EMAIL_RECIPIENTS` - List of email addresses
@@ -306,7 +293,7 @@ From multi-site linkchecker to wagtail-linkaudit:
 ### Future Enhancements (Ideas)
 
 - Wagtail admin dashboard panel showing latest scan status
-- Scheduled scans via Celery Beat
+- Scheduled scans via Celery or Django tasks
 - Re-check individual links from admin
 - Link to specific page edit in Wagtail (for internal broken links)
 - Historical trending of broken link counts
